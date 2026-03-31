@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Principal OTP Verification</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins', sans-serif;
+        }
+
+        body{
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:#f1f5f9;
+        }
+
+        .otp-container{
+            width:420px;
+            background:white;
+            padding:40px 35px;
+            border-radius:18px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.08);
+            text-align:center;
+            animation:fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn{
+            from{ opacity:0; transform:translateY(10px); }
+            to{ opacity:1; transform:translateY(0); }
+        }
+
+        .icon{
+            font-size:50px;
+            color:#2563eb;
+            margin-bottom:12px;
+        }
+
+        h2{
+            font-size:20px;
+            margin-bottom:6px;
+            color:#0f172a;
+        }
+
+        .subtitle{
+            font-size:13px;
+            color:#64748b;
+            margin-bottom:28px;
+        }
+
+        input{
+            width:100%;
+            padding:14px;
+            border:2px solid #e2e8f0;
+            border-radius:10px;
+            outline:none;
+            font-size:18px;
+            text-align:center;
+            letter-spacing:6px;
+            transition:.25s;
+        }
+
+        input:focus{
+            border-color:#2563eb;
+        }
+
+        button{
+            width:100%;
+            margin-top:22px;
+            padding:14px;
+            border:none;
+            border-radius:30px;
+            background:#2563eb;
+            color:white;
+            font-size:15px;
+            cursor:pointer;
+            transition:.25s;
+        }
+
+        button:hover{
+            background:#1d4ed8;
+            transform:translateY(-1px);
+        }
+
+        .error{
+            color:#dc2626;
+            font-size:13px;
+            margin-bottom:10px;
+        }
+
+        .success{
+            color:#16a34a;
+            font-size:13px;
+            margin-bottom:10px;
+        }
+
+        .resend{
+            margin-top:18px;
+            font-size:13px;
+            color:#64748b;
+        }
+
+        .resend a{
+            color:#2563eb;
+            text-decoration:none;
+            font-weight:500;
+        }
+
+        .resend a:hover{
+            text-decoration:underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="otp-container">
+
+    <div class="icon">
+        <i class="fa-solid fa-shield-halved"></i>
+    </div>
+
+    <h2>OTP Verification</h2>
+
+    <!-- ✅ UPDATED TEXT -->
+    <div class="subtitle">
+        Enter the OTP sent to your registered email<br>
+        <b th:text="${maskedEmail}"></b>
+    </div>
+
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+    <div class="success" th:if="${message}" th:text="${message}"></div>
+
+    <form th:action="@{/principal/verify-otp}" method="post">
+
+        <input type="text"
+               name="otp"
+               placeholder="Enter OTP"
+               maxlength="6"
+               inputmode="numeric"
+               pattern="[0-9]*"
+               autocomplete="one-time-code"
+               autofocus
+               required>
+
+        <button type="submit">
+            Verify OTP
+        </button>
+
+    </form>
+
+    <div class="resend">
+        Didn’t receive OTP?
+        <a th:href="@{/principal/resend-otp}">Resend</a>
+    </div>
+
+</div>
+
+<script>
+    const otpInput = document.querySelector('input[name="otp"]');
+    otpInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+</script>
+
+</body>
+</html>

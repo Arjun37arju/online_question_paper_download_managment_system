@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <title>Question Paper Management</title>
+
+    <style>
+
+        /* ===== Reset ===== */
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"Roboto", Arial, sans-serif;
+        }
+
+        /* ===== Body ===== */
+        body{
+            min-height:100vh;
+            background:linear-gradient(to right,#1d2671,#c33764);
+            display:flex;
+            flex-direction:column;
+        }
+
+        /* ===== Header ===== */
+        .header{
+            text-align:center;
+            padding:30px;
+            color:white;
+        }
+
+        .header h1{
+            font-size:42px;
+        }
+
+        .header h3{
+            font-size:24px;
+            opacity:0.9;
+        }
+
+        .header p{
+            font-size:17px;
+        }
+
+        /* ===== Card ===== */
+        .card{
+            width:1200px;
+            max-width:95%;
+            margin:40px auto;
+            background:white;
+            padding:45px;
+            border-radius:14px;
+            box-shadow:0 12px 30px rgba(0,0,0,0.35);
+        }
+
+        /* ===== Heading ===== */
+        h2{
+            text-align:center;
+            margin-bottom:25px;
+            color:#222;
+            font-size:26px;
+        }
+
+        /* ===== Back Button ===== */
+        .back-btn{
+            display:inline-block;
+            margin-bottom:20px;
+            background:#1d2671;
+            color:white;
+            padding:9px 18px;
+            border-radius:6px;
+            text-decoration:none;
+            font-size:14px;
+        }
+
+        .back-btn:hover{
+            background:#141c52;
+        }
+
+        /* ===== Error ===== */
+        .error{
+            text-align:center;
+            color:red;
+            margin-bottom:15px;
+            font-size:15px;
+        }
+
+        /* ===== Form ===== */
+        form{
+            display:flex;
+            flex-direction:column;
+            gap:22px;
+        }
+
+        .form-group{
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+        }
+
+        label{
+            font-weight:600;
+            font-size:16px;
+        }
+
+        /* ===== Inputs ===== */
+        select,
+        input{
+            width:100%;
+            padding:14px;
+            border:2.5px solid #1d2671;
+            border-radius:9px;
+            font-size:16px;
+            outline:none;
+            transition:0.3s;
+        }
+
+        select:focus,
+        input:focus{
+            border-color:#c33764;
+            box-shadow:0 0 10px rgba(195,55,100,0.4);
+        }
+
+        /* ===== Button ===== */
+        button{
+            background:#1d2671;
+            color:white;
+            border:none;
+            padding:15px;
+            border-radius:9px;
+            font-size:17px;
+            cursor:pointer;
+            margin-top:15px;
+        }
+
+        button:hover{
+            background:#141c52;
+        }
+
+        /* ===== Table ===== */
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:35px;
+        }
+
+        th{
+            background:#2f3640;
+            color:white;
+            padding:12px;
+            font-size:15px;
+        }
+
+        td{
+            padding:10px;
+            border:1px solid #ddd;
+            text-align:center;
+            font-size:14px;
+        }
+
+        tr:nth-child(even){
+            background:#f4f6f8;
+        }
+
+        /* ===== Action Buttons ===== */
+        .view{
+            background:#007bff;
+            color:white;
+            padding:6px 14px;
+            border-radius:5px;
+            text-decoration:none;
+            font-size:13px;
+            min-width:55px;
+            text-align:center;
+        }
+
+        .delete{
+            background:#dc3545;
+            color:white;
+            padding:6px 14px;
+            border-radius:5px;
+            text-decoration:none;
+            font-size:13px;
+            min-width:65px;
+            text-align:center;
+        }
+
+        .view:hover{ background:#0056b3; }
+        .delete:hover{ background:#c82333; }
+
+        /* ===== Action Column ===== */
+        td.action-cell{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            gap:8px;
+        }
+
+        /* ===== Footer ===== */
+        footer{
+            text-align:center;
+            margin:25px 0;
+            color:white;
+            font-size:19px;
+        }
+
+        /* ===== Mobile ===== */
+        @media(max-width:650px){
+
+            .card{
+                padding:30px;
+                width:95%;
+            }
+
+            .header h1{
+                font-size:30px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+
+    <h1>Cauvery Polytechnic Gonikoppal</h1>
+    <h3>Online Diploma Question Paper Download System</h3>
+    <p>Question Paper Management</p>
+
+</div>
+
+
+
+<!-- ===== CARD ===== -->
+<div class="card">
+
+    <a href="/admin/dashboard" class="back-btn">← Back to Dashboard</a>
+
+    <h2>Upload Question Paper</h2>
+
+    <p class="error" th:text="${error}"></p>
+
+
+    <!-- ===== FORM ===== -->
+    <form th:action="@{/admin/question-paper/upload}"
+          method="post"
+          enctype="multipart/form-data">
+
+
+        <div class="form-group">
+
+            <label>Select Subject</label>
+
+            <select name="subjectCode" required>
+
+                <option value="">-- Select Subject --</option>
+
+                <option th:each="s : ${subjects}"
+                        th:value="${s.subjectCode}"
+                        th:text="${s.subjectCode + ' - ' + s.subjectName}">
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Upload PDF File</label>
+
+            <input type="file"
+                   name="file"
+                   accept="application/pdf"
+                   required>
+
+        </div>
+
+
+        <button type="submit">
+            Upload Question Paper
+        </button>
+
+    </form>
+
+
+
+    <!-- ===== TABLE ===== -->
+    <h2 style="margin-top:35px;">Uploaded Question Papers</h2>
+
+
+    <table>
+
+        <tr>
+            <th>Sl No</th>
+            <th>Subject Code</th>
+            <th>File Name</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+
+
+        <tr th:each="p,stat : ${papers}">
+
+            <td th:text="${stat.count}"></td>
+
+            <td th:text="${p.subjectCode}"></td>
+
+            <td th:text="${#strings.substringAfter(p.fileName, '_')}"></td>
+
+            <td th:text="${p.qpSelected}"></td>
+
+
+            <!-- ACTION -->
+            <td class="action-cell">
+
+                <a class="view"
+                   th:href="@{/admin/question-paper/view/{id}(id=${p.id})}"
+                   target="_blank">
+                    View
+                </a>
+
+                <a class="delete"
+                   th:href="@{/admin/question-paper/delete/{id}(id=${p.id})}"
+                   onclick="return confirm('Delete this question paper?')">
+                    Delete
+                </a>
+
+            </td>
+
+        </tr>
+
+    </table>
+
+
+</div>
+
+
+
+<!-- ===== FOOTER ===== -->
+<footer>
+
+    Developed And Designed By Jeevan V E, Arjun R, Vivek C R, Nithya N P, Krish K D | 2026 | Java Full Stack Project
+
+</footer>
+
+
+</body>
+</html>

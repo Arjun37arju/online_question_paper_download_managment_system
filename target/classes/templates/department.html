@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Department Management</title>
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"Roboto", Arial, sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            background:linear-gradient(to right,#1d2671,#c33764);
+            display:flex;
+            flex-direction:column;
+        }
+
+        .header{
+            text-align:center;
+            padding:30px;
+            color:white;
+        }
+
+        .header h1{ font-size:42px; }
+        .header h3{ font-size:24px; opacity:0.9; }
+        .header p{ font-size:17px; }
+
+        .card{
+            width:900px;
+            max-width:95%;
+            margin:40px auto;
+            background:white;
+            padding:45px;
+            border-radius:14px;
+            box-shadow:0 12px 30px rgba(0,0,0,0.35);
+        }
+
+        h2{
+            text-align:center;
+            margin-bottom:25px;
+            color:#222;
+        }
+
+        .back-btn{
+            display:inline-block;
+            margin-bottom:20px;
+            background:#1d2671;
+            color:white;
+            padding:9px 18px;
+            border-radius:6px;
+            text-decoration:none;
+        }
+
+        .error{
+            text-align:center;
+            color:red;
+            margin-bottom:15px;
+            font-weight:bold;
+        }
+
+        form{
+            display:flex;
+            flex-direction:column;
+            gap:20px;
+        }
+
+        .form-group{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        input,select{
+            padding:12px;
+            border:2px solid #1d2671;
+            border-radius:8px;
+            font-size:15px;
+        }
+
+        button{
+            background:#1d2671;
+            color:white;
+            padding:14px;
+            border:none;
+            border-radius:8px;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:30px;
+        }
+
+        th{
+            background:#2f3640;
+            color:white;
+            padding:12px;
+        }
+
+        td{
+            padding:10px;
+            border:1px solid #ddd;
+            text-align:center;
+        }
+
+        tr:nth-child(even){
+            background:#f4f6f8;
+        }
+
+        .delete{
+            background:#dc3545;
+            color:white;
+            padding:6px 12px;
+            border-radius:5px;
+            text-decoration:none;
+        }
+
+        .edit{
+            background:#28a745;
+            color:white;
+            padding:6px 12px;
+            border-radius:5px;
+            text-decoration:none;
+            margin-right:5px;
+        }
+
+        footer{
+            text-align:center;
+            margin:25px 0;
+            color:white;
+            font-size:17px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+<div class="header">
+
+    <h1>Cauvery Polytechnic Gonikoppal</h1>
+    <h3>Online Diploma Question Paper Download System</h3>
+    <p>Department Management</p>
+
+</div>
+
+
+
+<!-- CARD -->
+<div class="card">
+
+    <a href="/admin/dashboard" class="back-btn">← Back to Dashboard</a>
+
+
+    <!-- TITLE -->
+    <h2 th:text="${editMode} ? 'Edit Department Mapping' : 'Add Department to College'"></h2>
+
+
+    <!-- ERROR -->
+    <p class="error" th:if="${error}" th:text="${error}"></p>
+
+
+    <!-- FORM -->
+    <form th:action="@{/admin/department/save}"
+          th:object="${mapping}"
+          method="post">
+
+
+        <!-- Department -->
+        <div class="form-group">
+            <label>Department</label>
+
+            <select th:field="*{departmentId}"
+                    id="deptId"
+                    onchange="setDeptName()"
+                    required
+                    th:disabled="${editMode}">
+
+                <option value="">-- Select Department --</option>
+
+                <option th:each="d : ${departments}"
+                        th:value="${d.departmentId}"
+                        th:text="${d.departmentId}"
+                        th:data-name="${d.departmentName}">
+                </option>
+
+            </select>
+        </div>
+
+
+        <!-- Hidden field for edit -->
+        <input type="hidden"
+               th:if="${editMode}"
+               th:field="*{departmentId}">
+
+
+        <!-- Department Name -->
+        <div class="form-group">
+            <label>Department Name</label>
+
+            <input type="text"
+                   id="deptName"
+                   readonly>
+        </div>
+
+
+        <!-- College -->
+        <!-- College -->
+        <div class="form-group">
+            <label>College</label>
+
+            <select th:field="*{collegeCode}" required>
+
+                <option value="">-- Select College --</option>
+
+                <option th:each="c : ${colleges}"
+                        th:value="${c.collegeCode}"
+                        th:text="${c.collegeCode + ' - ' + c.collegeName}">
+                </option>
+
+            </select>
+        </div>
+
+
+
+        <!-- Hidden field for edit -->
+        <input type="hidden"
+               th:if="${editMode}"
+               th:field="*{collegeCode}">
+
+
+        <!-- BUTTON -->
+        <button type="submit"
+                th:text="${editMode} ? 'Update Department' : 'Save Department'">
+        </button>
+
+    </form>
+
+
+
+    <!-- TABLE -->
+    <h2 style="margin-top:30px;">Mapped Departments</h2>
+
+
+    <table>
+
+        <tr>
+            <th>College</th>
+            <th>Department</th>
+            <th>Action</th>
+        </tr>
+
+
+        <tr th:each="m : ${mappings}">
+
+            <td th:text="${m.collegeCode}"></td>
+
+            <td th:text="${m.departmentId}"></td>
+
+            <td>
+
+                <!-- EDIT -->
+                <a class="edit"
+                   th:href="@{/admin/department/edit/{c}/{d}
+                   (c=${m.collegeCode},d=${m.departmentId})}">
+                    Edit
+                </a>
+
+
+                <!-- DELETE -->
+                <a class="delete"
+                   th:href="@{/admin/department/delete/{c}/{d}
+                   (c=${m.collegeCode},d=${m.departmentId})}"
+                   onclick="return confirm('Delete this mapping?')">
+                    Delete
+                </a>
+
+            </td>
+
+        </tr>
+
+    </table>
+
+
+</div>
+
+
+<footer>
+    Developed And Designed By Jeevan V E, Arjun R, Vivek C R, Nithya N P, Krish K D | 2026
+</footer>
+
+
+
+<!-- JS -->
+<script>
+
+    function setDeptName(){
+
+        let select = document.getElementById("deptId");
+
+        let name =
+            select.options[select.selectedIndex]
+                .getAttribute("data-name");
+
+        document.getElementById("deptName").value =
+            name || "";
+    }
+
+</script>
+
+
+</body>
+</html>

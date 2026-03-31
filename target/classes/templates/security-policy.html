@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Security Policy</title>
+
+    <style>
+
+        body{
+        font-family:Arial;
+        background:#f5f6fa;
+        margin:0;
+        padding:40px;
+        }
+
+        .container{
+        max-width:900px;
+        margin:auto;
+        background:white;
+        padding:30px;
+        border-radius:10px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        h1{
+        color:#1f2937;
+        margin-bottom:20px;
+        }
+
+        p{
+        line-height:1.7;
+        color:#444;
+        margin-bottom:15px;
+        }
+
+        .back{
+        margin-top:20px;
+        display:inline-block;
+        padding:10px 18px;
+        background:#2563eb;
+        color:white;
+        text-decoration:none;
+        border-radius:5px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Security Policy</h1>
+
+    <p>
+        The Online Question Paper Download System follows strict security
+        measures to protect examination data.
+    </p>
+
+    <p>
+        Access to the system is restricted to authorized principals and
+        administrators through secure login authentication.
+    </p>
+
+    <p>
+        All question papers are stored securely and can only be downloaded
+        during the permitted exam time.
+    </p>
+
+    <p>
+        Any attempt to access or distribute exam materials illegally will
+        be considered a serious violation.
+    </p>
+
+    <a th:href="@{/principal/dashboard}" class="back">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Download Question Paper</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:'Poppins', sans-serif;
+        }
+
+        body{
+        background:#f1f5f9;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+        }
+
+        .card{
+        background:white;
+        padding:40px 50px;
+        border-radius:22px;
+        width:1100px;
+        max-width:100%;
+        box-shadow:0 20px 45px rgba(0,0,0,0.12);
+        }
+
+        .header{
+        text-align:center;
+        margin-bottom:20px;
+        padding-bottom:15px;
+        border-bottom:1px solid #e2e8f0;
+        }
+
+        .header h1{
+        font-size:39px;
+        color:#0f172a;
+        }
+
+        .header h2{
+        font-size:25px;
+        font-weight:500;
+        color:#475569;
+        margin-top:4px;
+        }
+
+        .info{
+        margin-top:10px;
+        font-size:20px;
+        color:#334155;
+        }
+
+        h3{
+        margin:20px 0;
+        color:#0f172a;
+        }
+
+        .row{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        padding:14px 18px;
+        border-radius:12px;
+        margin-top:12px;
+        }
+
+        .subject-box{
+        background:white;
+        border:1px solid #cbd5f5;
+        padding:10px 18px;
+        border-radius:10px;
+        min-width:320px;
+        }
+
+        .subject-name{
+        font-size:17px;
+        font-weight:500;
+        color:#0f172a;
+        }
+
+        .subject-code{
+        font-size:16px;
+        color:#64748b;
+        margin-top:2px;
+        }
+
+        .meta{
+        font-size:15px;
+        color:#475569;
+        margin-top:4px;
+        }
+
+        .btn{
+        background:#2563eb;
+        color:white;
+        border:none;
+        padding:10px 20px;
+        border-radius:10px;
+        cursor:pointer;
+        font-size:13px;
+        font-weight:500;
+        }
+
+        .btn:disabled{
+        background:gray;
+        cursor:not-allowed;
+        }
+
+        .status{
+        font-size:12px;
+        margin-top:4px;
+        text-align:right;
+        }
+
+        .postponed{ color:#dc2626; font-weight:600; }
+        .wait{ color:#dc2626; }
+        .ready{ color:#16a34a; }
+        .countdown{ color:#ea580c; font-weight:600; }
+
+        .back{
+        display:block;
+        margin-top:25px;
+        text-decoration:none;
+        font-size:14px;
+        color:#0f172a;
+        text-align:center;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="header">
+        <h1>Board of Technical Examination</h1>
+        <h2>Online Question Paper Download System</h2>
+
+        <div class="info">
+            College: <b th:text="${collegeName}">402</b> |
+            Principal: <b th:text="${principalName}">Principal Name</b>
+        </div>
+    </div>
+
+    <h3>Download Question Paper</h3>
+
+    <div th:if="${noPaper}">
+        <p class="wait">No Exams Scheduled</p>
+    </div>
+
+    <div th:each="sub : ${subjects}" class="row"
+         th:attr="data-code=${sub.subjectCode},
+data-date=${#temporals.format(sub.examDate,'yyyy-MM-dd')},
+data-time=${#temporals.format(sub.examTime,'HH:mm:ss')}">
+
+        <div class="subject-box">
+
+            <div class="subject-name" th:text="${sub.subjectName}">Subject Name</div>
+            <div class="subject-code" th:text="${sub.subjectCode}">CODE</div>
+
+            <div class="meta">
+                Date: <span th:text="${sub.examDate}"></span>
+                |
+                Time: <span th:text="${sub.examTime}"></span>
+            </div>
+
+        </div>
+
+        <div>
+
+            <button class="btn downloadBtn"
+                    th:attr="data-code=${sub.subjectCode}">
+                Download
+            </button>
+
+            <div class="status waitMsg">Checking...</div>
+
+        </div>
+
+    </div>
+
+    <a th:href="@{/principal/dashboard}" class="back">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+<script>
+
+    let refreshTimer;
+
+    function evaluateRow(row){
+
+    const code = row.dataset.code;
+    const dateText = row.dataset.date;
+    const timeText = row.dataset.time;
+
+    const btn = row.querySelector(".downloadBtn");
+    const msg = row.querySelector(".waitMsg");
+
+    if(!btn || !msg) return;
+
+    const d = dateText.split("-");
+    const t = timeText.split(":");
+
+    const examDateTime = new Date(
+    Number(d[0]),
+    Number(d[1])-1,
+    Number(d[2]),
+    Number(t[0]),
+    Number(t[1]),
+    Number(t[2])
+    );
+
+    const allowedTime = new Date(examDateTime.getTime() - 60*60*1000);
+    const expiryTime = new Date(allowedTime.getTime() + 90*60*1000);
+
+    const now = new Date();
+
+    if(now > expiryTime){
+    row.remove();
+    return;
+    }
+
+    fetch('/principal/status/' + code + '?ts=' + Date.now(), {cache:'no-store'})
+    .then(res => res.text())
+    .then(status => {
+
+    if(status === "POSTPONED"){
+
+    btn.disabled = true;
+    msg.innerText = "⚠ Exam Is Postponed";
+    msg.className = "status waitMsg postponed";
+    return;
+
+    }
+
+    if(now >= allowedTime){
+
+    btn.disabled = false;
+    msg.innerText = "✅ Download Ready";
+    msg.className = "status waitMsg ready";
+
+    }else{
+
+    btn.disabled = true;
+
+    let diff = allowedTime - now;
+
+    let hours = Math.floor(diff/(1000*60*60));
+    let minutes = Math.floor((diff%(1000*60*60))/(1000*60));
+    let seconds = Math.floor((diff%(1000*60))/1000);
+
+    msg.innerText =
+    "⏳ Opens in " +
+    String(hours).padStart(2,'0') + ":" +
+    String(minutes).padStart(2,'0') + ":" +
+    String(seconds).padStart(2,'0');
+
+    msg.className = "status waitMsg countdown";
+
+    }
+
+    })
+    .catch(()=>{
+    btn.disabled = true;
+    msg.innerText="Connection Error";
+    msg.className="status waitMsg wait";
+    });
+
+    }
+
+    function refreshAll(){
+
+    const rows = document.querySelectorAll(".row");
+
+    if(rows.length===0){
+
+    clearInterval(refreshTimer);
+
+    document.querySelector(".card").innerHTML =
+    "<h3 style='text-align:center;color:#dc2626'>No Active Exams</h3>";
+
+    return;
+
+    }
+
+    rows.forEach(evaluateRow);
+
+    }
+
+    document.addEventListener("click",function(e){
+
+    if(e.target.classList.contains("downloadBtn")){
+
+    const code = e.target.dataset.code;
+
+    window.location.href='/principal/download-paper/'+code;
+
+    }
+
+    });
+
+    refreshAll();
+
+    refreshTimer=setInterval(refreshAll,1000);
+
+</script>
+
+</body>
+</html>

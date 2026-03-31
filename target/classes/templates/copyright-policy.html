@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Copyright Policy</title>
+
+    <style>
+
+        body{
+        font-family:Arial;
+        background:#f5f6fa;
+        margin:0;
+        padding:40px;
+        }
+
+        .container{
+        max-width:900px;
+        margin:auto;
+        background:white;
+        padding:30px;
+        border-radius:10px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        h1{
+        color:#1f2937;
+        margin-bottom:20px;
+        }
+
+        p{
+        line-height:1.7;
+        color:#444;
+        margin-bottom:15px;
+        }
+
+        .back{
+        margin-top:20px;
+        display:inline-block;
+        padding:10px 18px;
+        background:#2563eb;
+        color:white;
+        text-decoration:none;
+        border-radius:5px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Copyright Policy</h1>
+
+    <p>
+        All content available on the Online Question Paper Download System,
+        including text, graphics, logos, and software, is the property of
+        the examination authority.
+    </p>
+
+    <p>
+        Unauthorized copying, reproduction, or distribution of examination
+        materials or question papers is strictly prohibited.
+    </p>
+
+    <p>
+        Users are permitted to access and use the information only for
+        authorized academic and examination purposes.
+    </p>
+
+    <a th:href="@{/principal/dashboard}" class="back">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Download Logs</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:'Poppins',sans-serif;
+        }
+
+        body{
+        background:linear-gradient(120deg,#f0f4ff,#e8f0ff);
+        padding:40px;
+        }
+
+        .header{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:25px;
+        }
+
+        .title{
+        font-size:28px;
+        font-weight:600;
+        color:#1e293b;
+        }
+
+        .subtitle{
+        color:#64748b;
+        margin-top:4px;
+        }
+
+        .actions{
+        display:flex;
+        gap:10px;
+        }
+
+        .back-btn{
+        background:#2563eb;
+        color:white;
+        padding:10px 16px;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:14px;
+        }
+
+        .back-btn:hover{
+        background:#1d4ed8;
+        }
+
+        .card{
+        background:white;
+        padding:30px;
+        border-radius:16px;
+        box-shadow:0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .table-wrapper{
+        overflow-x:auto;
+        }
+
+        table{
+        width:100%;
+        border-collapse:collapse;
+        }
+
+        th{
+        text-align:left;
+        padding:14px;
+        font-size:14px;
+        background:#2563eb;
+        color:white;
+        }
+
+        td{
+        padding:14px;
+        border-bottom:1px solid #eee;
+        font-size:14px;
+        }
+
+        tr:hover{
+        background:#f8fafc;
+        }
+
+        .success{
+        color:#16a34a;
+        font-weight:600;
+        }
+
+        .blocked{
+        color:#ea580c;
+        font-weight:600;
+        }
+
+        .expired{
+        color:#dc2626;
+        font-weight:600;
+        }
+
+        .failed{
+        color:#b91c1c;
+        font-weight:600;
+        }
+
+        .principal{
+        background:#eef2ff;
+        color:#4338ca;
+        padding:6px 12px;
+        border-radius:8px;
+        font-weight:500;
+        display:inline-block;
+        }
+
+        .empty{
+        text-align:center;
+        padding:40px;
+        color:#64748b;
+        font-size:15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <div>
+        <div class="title">📥 Download Log Status</div>
+        <div class="subtitle">Monitor question paper downloads by principals</div>
+    </div>
+
+    <div class="actions">
+        <a href="/admin/download-logs-file" class="back-btn">Download</a>
+        <a href="/admin/dashboard" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+</div>
+
+<div class="card">
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>Principal Code</th>
+                <th>Subject</th>
+                <th>Download Time</th>
+                <th>IP Address</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:if="${#lists.isEmpty(logs)}">
+                <td colspan="5" class="empty">No download logs available</td>
+            </tr>
+
+            <tr th:each="log : ${logs}">
+
+                <td>
+                    <span class="principal" th:text="${log.principalCode}"></span>
+                </td>
+
+                <td th:text="${log.subjectCode}"></td>
+
+                <td th:text="${#temporals.format(log.downloadTime,'dd-MM-yyyy HH:mm:ss')}"></td>
+
+                <td th:text="${log.ipAddress}"></td>
+
+                <td>
+
+                    <span th:if="${log.status=='SUCCESS'}" class="success">SUCCESS</span>
+                    <span th:if="${log.status=='BLOCKED'}" class="blocked">BLOCKED</span>
+                    <span th:if="${log.status=='EXPIRED'}" class="expired">EXPIRED</span>
+                    <span th:if="${log.status=='FAILED'}" class="failed">FAILED</span>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

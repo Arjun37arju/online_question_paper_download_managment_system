@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Download</title>
+    <style>
+        body { background:#eef2f7; font-family:Arial; }
+        .box { width:400px; margin:100px auto; background:white; padding:30px;
+            border-radius:12px; text-align:center; }
+        button { padding:10px 20px; background:#28a745; color:white; border:none;
+            border-radius:8px; font-size:16px; }
+    </style>
+</head>
+<body>
+
+<div class="box" th:if="${paper != null}">
+    <h2 th:text="${paper.subjectCode}"></h2>
+    <p th:text="${paper.fileName}"></p>
+
+    <a th:href="@{'/files/' + ${paper.fileName}}" download>
+        <button>Download</button>
+    </a>
+</div>
+
+<div class="box" th:if="${paper == null}">
+    <h3>No question paper selected</h3>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Subject Management</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"Roboto", Arial, sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            background:linear-gradient(to right,#1d2671,#c33764);
+            display:flex;
+            flex-direction:column;
+        }
+
+        .header{
+            text-align:center;
+            padding:30px;
+            color:white;
+        }
+
+        .header h1{ font-size:42px; }
+        .header h3{ font-size:24px; }
+        .header p{ font-size:17px; }
+
+        .card{
+            width:1200px;
+            max-width:95%;
+            margin:40px auto;
+            background:white;
+            padding:45px;
+            border-radius:14px;
+            box-shadow:0 12px 30px rgba(0,0,0,0.35);
+        }
+
+        h2{
+            text-align:center;
+            margin-bottom:25px;
+            color:#222;
+            font-size:26px;
+        }
+
+        .back-btn{
+            display:inline-block;
+            margin-bottom:20px;
+            background:#1d2671;
+            color:white;
+            padding:9px 18px;
+            border-radius:6px;
+            text-decoration:none;
+        }
+
+        .error{
+            text-align:center;
+            color:red;
+            margin-bottom:15px;
+            font-weight:600;
+        }
+
+        .field-error{
+            color:red;
+            font-size:13px;
+            margin-top:3px;
+        }
+
+        form{
+            display:flex;
+            flex-direction:column;
+            gap:20px;
+        }
+
+        .form-group{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        label{ font-weight:600; }
+
+        input,select{
+            width:100%;
+            padding:14px;
+            border:2px solid #1d2671;
+            border-radius:8px;
+        }
+
+        button{
+            background:#1d2671;
+            color:white;
+            padding:14px;
+            border:none;
+            border-radius:8px;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:35px;
+        }
+
+        th{
+            background:#2f3640;
+            color:white;
+            padding:12px;
+        }
+
+        td{
+            padding:10px;
+            border:1px solid #ddd;
+            text-align:center;
+        }
+
+        tr:nth-child(even){ background:#f4f6f8; }
+
+        .edit{
+            background:#28a745;
+            color:white;
+            padding:6px 14px;
+            border-radius:5px;
+            text-decoration:none;
+            font-size:13px;
+        }
+
+        .delete{
+            background:#dc3545;
+            color:white;
+            padding:6px 14px;
+            border-radius:5px;
+            text-decoration:none;
+            font-size:13px;
+        }
+
+        .postpone{
+            background:#ffc107;
+            color:black;
+            padding:6px 14px;
+            border-radius:5px;
+            text-decoration:none;
+            font-size:13px;
+        }
+
+        td.action{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        footer{
+            text-align:center;
+            margin:25px 0;
+            color:white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Cauvery Polytechnic Gonikoppal</h1>
+    <h3>Online Diploma Question Paper Download System</h3>
+    <p>Subject Management</p>
+</div>
+
+<div class="card">
+
+    <a href="/admin/dashboard" class="back-btn">← Back to Dashboard</a>
+
+    <h2 th:text="${editMode} ? 'Edit Subject' : 'Add Subject'"></h2>
+
+    <p class="error" th:if="${error}" th:text="${error}"></p>
+
+    <form id="subjectForm"
+          th:action="${editMode} ? @{/admin/subject/update} : @{/admin/subject/save}"
+          th:object="${subject}"
+          method="post">
+
+        <div class="form-group">
+            <label>Subject Code</label>
+            <input type="text" id="subjectCode"
+                   th:field="*{subjectCode}"
+                   th:readonly="${editMode}" required>
+            <div class="field-error" id="codeError"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Subject Name</label>
+            <input type="text" id="subjectName"
+                   th:field="*{subjectName}" required>
+            <div class="field-error" id="nameError"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Department</label>
+            <select th:field="*{departmentId}" required>
+                <option value="">-- Select --</option>
+                <option th:each="d:${departments}"
+                        th:value="${d.departmentId}"
+                        th:text="${d.departmentId}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Semester</label>
+            <select th:field="*{semester}" required>
+                <option value="">-- Select --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Exam Date</label>
+            <input type="date" id="examDate" th:field="*{examDate}" required>
+            <div class="field-error" id="dateError"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Exam Time</label>
+            <input type="time" id="examTime" th:field="*{examTime}" required>
+            <div class="field-error" id="timeError"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Status</label>
+            <select th:field="*{examStatus}">
+                <option value="SCHEDULED">Scheduled</option>
+                <option value="POSTPONED">Postponed</option>
+                <option value="CANCELLED">Cancelled</option>
+            </select>
+        </div>
+
+        <button type="submit"
+                th:text="${editMode} ? 'Update Subject' : 'Save Subject'">
+        </button>
+    </form>
+
+    <h2 style="margin-top:35px;">Subject List</h2>
+
+    <table>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Dept</th>
+            <th>Sem</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+
+        <tr th:each="s:${subjects}">
+            <td th:text="${s.subjectCode}"></td>
+            <td th:text="${s.subjectName}"></td>
+            <td th:text="${s.departmentId}"></td>
+            <td th:text="${s.semester}"></td>
+            <td th:text="${s.examDate}"></td>
+            <td th:text="${s.examTime}"></td>
+            <td th:text="${s.examStatus}"></td>
+
+            <td class="action">
+                <a class="edit" th:href="@{/admin/subject/edit/{id}(id=${s.subjectCode})}">Edit</a>
+                <a class="postpone"
+                   th:href="@{/admin/subject/postpone/{id}(id=${s.subjectCode})}"
+                   onclick="return confirm('Postpone this exam?')">Postpone</a>
+                <a class="delete"
+                   th:href="@{/admin/subject/delete/{id}(id=${s.subjectCode})}"
+                   onclick="return confirm('Delete?')">Delete</a>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+<footer>
+    Developed And Designed By Jeevan V E, Arjun R, Vivek C R, Nithya N P, Krish K D | 2026 | Java Full Stack Project
+</footer>
+
+<script>
+
+    const form = document.getElementById("subjectForm");
+
+    form.addEventListener("submit", function(e){
+
+        let valid = true;
+
+        const code = document.getElementById("subjectCode").value.trim();
+        const name = document.getElementById("subjectName").value.trim();
+        const date = document.getElementById("examDate").value;
+        const time = document.getElementById("examTime").value;
+
+        document.getElementById("codeError").innerText = "";
+        document.getElementById("nameError").innerText = "";
+        document.getElementById("dateError").innerText = "";
+        document.getElementById("timeError").innerText = "";
+
+        if(code.length === 0){
+            document.getElementById("codeError").innerText = "Subject code is required";
+            valid = false;
+        }
+
+        if(!/^[A-Za-z ]+$/.test(name)){
+            document.getElementById("nameError").innerText =
+                "Subject name must contain letters only";
+            valid = false;
+        }
+
+        if(!date){
+            document.getElementById("dateError").innerText = "Exam date is required";
+            valid = false;
+        }
+
+        if(!time){
+            document.getElementById("timeError").innerText = "Exam time is required";
+            valid = false;
+        }
+
+        if(!valid) e.preventDefault();
+    });
+
+</script>
+
+</body>
+</html>

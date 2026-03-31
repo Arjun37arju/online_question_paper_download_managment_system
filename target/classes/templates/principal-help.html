@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Principal Help</title>
+
+    <style>
+
+        body{
+        font-family:Arial;
+        background:#f5f6fa;
+        margin:0;
+        padding:40px;
+        }
+
+        .container{
+        max-width:900px;
+        margin:auto;
+        background:white;
+        padding:30px;
+        border-radius:10px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        h1{
+        color:#1f2937;
+        }
+
+        ul{
+        line-height:1.8;
+        }
+
+        .back{
+        margin-top:20px;
+        display:inline-block;
+        padding:10px 20px;
+        background:#2563eb;
+        color:white;
+        text-decoration:none;
+        border-radius:6px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Principal Help</h1>
+
+    <p>This page helps principals use the Online Question Paper Download System.</p>
+
+    <ul>
+
+        <li>Login using your Principal Code.</li>
+
+        <li>Verify your login using OTP sent to your email.</li>
+
+        <li>Check exam instructions before downloading question papers.</li>
+
+        <li>Question papers can only be downloaded 1 hour before the exam.</li>
+
+        <li>Downloaded papers must remain confidential.</li>
+
+        <li>Contact administrator if any issue occurs.</li>
+
+    </ul>
+
+    <a th:href="@{/principal/dashboard}" class="back">Back to Dashboard</a>
+
+</div>
+
+</body>
+
+</html>

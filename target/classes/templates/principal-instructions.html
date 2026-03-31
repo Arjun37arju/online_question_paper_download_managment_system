@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Exam Instructions</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:'Poppins', sans-serif;
+    }
+
+    body{
+        background:#f1f5f9;
+        display:flex;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar{
+        width:270px;
+        height:100vh;
+        background:linear-gradient(180deg,#0f172a,#1e293b);
+        padding-top:30px;
+        position:fixed;
+        left:0;
+        top:0;
+    }
+
+    .sidebar a{
+        display:block;
+        color:white;
+        text-decoration:none;
+        font-size:20px;
+        padding:18px 35px;
+        margin:8px 15px;
+        border-radius:10px;
+    }
+
+    .sidebar a.active{
+        background:#16a34a;
+    }
+
+    /* ===== MAIN ===== */
+    .main{
+        margin-left:270px;
+        padding:40px;
+        width:100%;
+    }
+
+    .card{
+        background:white;
+        padding:40px;
+        border-radius:18px;
+        box-shadow:0 10px 30px rgba(0,0,0,0.08);
+        max-width:900px;
+    }
+
+    /* ✅ BIGGER HEADING */
+    h1{
+        color:#0f172a;
+        margin-bottom:25px;
+        font-size:34px;      /* ← Increased */
+        font-weight:600;
+    }
+
+    /* ✅ BIGGER INSTRUCTIONS */
+    ul{
+        margin-left:25px;
+        margin-top:10px;
+        color:#334155;
+        line-height:2.1;     /* ← More spacing */
+        font-size:20px;      /* ← Increased */
+        font-weight:500;
+    }
+
+    .btn{
+        margin-top:35px;
+        background:#2563eb;
+        color:white;
+        border:none;
+        padding:16px 34px;
+        border-radius:10px;
+        font-size:18px;
+        cursor:pointer;
+        transition:0.3s;
+    }
+
+    .btn:hover{
+        background:#1d4ed8;
+    }
+
+    .back-link{
+        display:inline-block;
+        margin-top:25px;
+        font-size:18px;
+        color:#0f172a;
+        text-decoration:none;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <a href="/principal/dashboard">🏠 Dashboard</a>
+  <a href="/principal/instructions" class="active">📄 Exam Instructions</a>
+  <a href="/principal/download">📥 Download Paper</a>
+  <a href="/principal/profile">👤 Profile</a>
+  <a href="/principal/logout">🚪 Logout</a>
+</div>
+
+<div class="main">
+
+  <div class="card">
+
+    <h1>Exam Instructions</h1>
+
+    <ul>
+      <li>Ensure exam starts at the scheduled time only.</li>
+      <li>Do not share question paper with unauthorized persons.</li>
+      <li>Download question paper only within allowed time window.</li>
+      <li>Maintain confidentiality of exam materials.</li>
+      <li>Report any system issues immediately to admin.</li>
+      <li>Follow all university / institution regulations strictly.</li>
+    </ul>
+
+    <button class="btn" onclick="location.href='/principal/download'">
+      Proceed to Download
+    </button>
+
+    <br>
+
+    <a href="/principal/dashboard" class="back-link">
+      ← Back to Dashboard
+    </a>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload Question Paper</title>
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
+</head>
+<body><div class="container"><h2 class="title">Upload New Question Paper</h2>
+
+    <form action="/admin/upload" method="post" enctype="multipart/form-data" class="upload-box">
+
+        <label>Subject Code</label>
+        <select name="subjectCode" required>
+            <option value="402CS">402CS</option>
+            <option value="402EC">402EC</option>
+            <option value="402ME">402ME</option>
+        </select>
+
+        <label>Question Paper (PDF)</label>
+        <input type="file" name="file" accept=".pdf" required>
+
+        <button type="submit" class="btn green">Upload</button>
+
+        <a href="/admin/dashboard" class="btn orange">Back</a>
+    </form>
+
+</div></body>
+</html>
